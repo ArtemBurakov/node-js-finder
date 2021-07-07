@@ -44,6 +44,25 @@ User.authorize = (user, result) => {
   });
 };
 
+User.findByAccessToken = (userAccessToken, result) => {
+  sql.query(`SELECT id FROM users WHERE access_token = '${userAccessToken}'`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found userId: ", res[0].id);
+      result(null, res[0].id);
+      return;
+    }
+
+    // not found User with the id
+    result({ kind: "not_found" }, null);
+  });
+};
+
 // User.findById = (userId, result) => {
 //   sql.query(`SELECT * FROM users WHERE id = ${userId}`, (err, res) => {
 //     if (err) {

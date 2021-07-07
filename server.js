@@ -15,6 +15,7 @@ app.get("/", (req, res) => {
 });
 
 require("./routes/userRoutes")(app);
+require("./routes/userFcmTokenRoutes")(app);
 
 // set port, listen for requests
 app.listen(3000, () => {

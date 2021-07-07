@@ -1,4 +1,4 @@
-const User = require("../models/userModel");
+const User = require("../models/user");
 const TokenGenerator = require('uuid-token-generator');
 
 const getCurrentTime = () => {
