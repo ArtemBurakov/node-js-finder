@@ -1,11 +1,12 @@
 module.exports = app => {
-    const users = require("../controller/userController");
+    const users = require("../controller/UserController");
+    const validationMiddleware = require('../middleware/validation-middleware');
 
     // Create a new User
-    app.post("/users", users.create);
+    app.post("/users", validationMiddleware.create, users.create);
 
     // Authorize User
-    app.post("/users/authorize", users.authorize);
+    app.post("/users/authorize", validationMiddleware.authorize, users.authorize);
 
     // // Retrieve all Users
     // app.get("/users", users.findAll);

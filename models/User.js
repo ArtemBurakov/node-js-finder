@@ -25,8 +25,8 @@ User.create = (newUser, result) => {
 };
 
 User.authorize = (user, result) => {
-  // Find User by email and password
-  sql.query(`SELECT * FROM users WHERE email = '${user.email}' AND password = ${user.password}`, (err, res) => {
+  // Authorize User by email and password
+  sql.query(`SELECT * FROM users WHERE email = '${user.email}' AND password = '${user.password}'`, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -39,7 +39,7 @@ User.authorize = (user, result) => {
       return;
     }
 
-    // not found User with the name
+    // not found User with the same email and password
     result({ kind: "not_found" }, null);
   });
 };
@@ -53,8 +53,27 @@ User.findByAccessToken = (userAccessToken, result) => {
     }
 
     if (res.length) {
-      console.log("found userId: ", res[0].id);
-      result(null, res[0].id);
+      console.log("found user by accessToken: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    // not found User with the accessToken
+    result({ kind: "not_found" }, null);
+  });
+};
+
+User.findById = (userId, result) => {
+  sql.query(`SELECT * FROM users WHERE id = ${userId}`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found user: ", res[0]);
+      result(null, res[0]);
       return;
     }
 
@@ -63,24 +82,43 @@ User.findByAccessToken = (userAccessToken, result) => {
   });
 };
 
-// User.findById = (userId, result) => {
-//   sql.query(`SELECT * FROM users WHERE id = ${userId}`, (err, res) => {
-//     if (err) {
-//       console.log("error: ", err);
-//       result(err, null);
-//       return;
-//     }
+User.findByEmail = (email, result) => {
+  sql.query(`SELECT * FROM users WHERE email = '${email}'`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
 
-//     if (res.length) {
-//       console.log("found user: ", res[0]);
-//       result(null, res[0]);
-//       return;
-//     }
+    if (res.length) {
+      console.log("found user by email: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
 
-//     // not found User with the id
-//     result({ kind: "not_found" }, null);
-//   });
-// };
+    // not found User with the email
+    result({ kind: "not_found" }, null);
+  });
+};
+
+User.findByUsername = (username, result) => {
+  sql.query(`SELECT * FROM users WHERE username = '${username}'`, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      console.log("found user by username: ", res[0]);
+      result(null, res[0]);
+      return;
+    }
+
+    // not found User with the username
+    result({ kind: "not_found" }, null);
+  });
+};
 
 // User.getAll = result => {
 //   sql.query("SELECT * FROM users", (err, res) => {
@@ -133,19 +171,6 @@ User.findByAccessToken = (userAccessToken, result) => {
 //     }
 
 //     console.log("deleted user with id: ", id);
-//     result(null, res);
-//   });
-// };
-
-// User.removeAll = result => {
-//   sql.query("DELETE FROM users", (err, res) => {
-//     if (err) {
-//       console.log("error: ", err);
-//       result(null, err);
-//       return;
-//     }
-
-//     console.log(`deleted ${res.affectedRows} users`);
 //     result(null, res);
 //   });
 // };

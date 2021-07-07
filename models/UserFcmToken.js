@@ -1,11 +1,11 @@
 const sql = require("./db.js");
 
 // constructor
-const UserFcmToken = function(fcmToken) {
-    this.registration_token = fcmToken.registration_token;
-    this.user_id = fcmToken.user_id;
-    this.created_at = fcmToken.created_at;
-    this.updated_at = fcmToken.updated_at;
+const UserFcmToken = function(userFcmToken) {
+    this.registration_token = userFcmToken.registration_token;
+    this.user_id = userFcmToken.user_id;
+    this.created_at = userFcmToken.created_at;
+    this.updated_at = userFcmToken.updated_at;
 };
 
 UserFcmToken.add = (newUserFcmToken, result) => {
