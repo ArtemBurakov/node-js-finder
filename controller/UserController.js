@@ -1,6 +1,9 @@
 const User = require("../models/User");
 const TokenGenerator = require('uuid-token-generator');
 
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 const getCurrentTime = () => {
   return Math.floor(Date.now() / 1000);
 }
@@ -10,11 +13,13 @@ const generateAccessToken = () => {
 }
 
 // Create and Save a new User
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
+  const hashed_pass = await bcrypt.hash(req.body.password, saltRounds);
+
   // Create a User
   const user = new User({
     username: req.body.username,
-    password: req.body.password,
+    password_hash: hashed_pass,
     email: req.body.email,
     status: 10,
     created_at: getCurrentTime(),
@@ -44,14 +49,7 @@ exports.create = (req, res) => {
 
 // Authorize User
 exports.authorize = (req, res) => {
-  // Make User model
-  const user = new User({
-    email: req.body.email,
-    password: req.body.password
-  });
-
-  // Authorize User
-  User.authorize(user, (err, data) => {
+  User.findByEmail(req.body.email, async (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
@@ -66,17 +64,27 @@ exports.authorize = (req, res) => {
           message: 'Some error occurred while authorizing the User.'
         });
       }
+    } else {
+      const valid = await bcrypt.compare(req.body.password, data.password_hash);
+
+      if (valid) {
+        res.send({
+          success: true,
+          data: {
+            id: data.id,
+            email: data.email,
+            username: data.username,
+            access_token: data.access_token
+          },
+          message: 'User authorized successful.'
+        });
+      }
+      else res.status(404).send({
+        success: false,
+        data: null,
+        message: `Not found User. Check your email or password.`
+      });
     }
-    else res.send({
-      success: true,
-      data: {
-        id: data.id,
-        email: data.email,
-        username: data.username,
-        access_token: data.access_token
-      },
-      message: 'User authorized successful.'
-    });
   });
 };
 

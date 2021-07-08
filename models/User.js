@@ -3,7 +3,7 @@ const sql = require("./db.js");
 // constructor
 const User = function(user) {
   this.username = user.username;
-  this.password = user.password;
+  this.password_hash = user.password_hash;
   this.email = user.email;
   this.status = user.status;
   this.created_at = user.created_at;
@@ -21,26 +21,6 @@ User.create = (newUser, result) => {
 
     console.log("created user: ", { id: res.insertId, ...newUser });
     result(null, { id: res.insertId, ...newUser });
-  });
-};
-
-User.authorize = (user, result) => {
-  // Authorize User by email and password
-  sql.query(`SELECT * FROM users WHERE email = '${user.email}' AND password = '${user.password}'`, (err, res) => {
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-      return;
-    }
-
-    if (res.length) {
-      console.log("found user: ", res[0]);
-      result(null, res[0]);
-      return;
-    }
-
-    // not found User with the same email and password
-    result({ kind: "not_found" }, null);
   });
 };
 
