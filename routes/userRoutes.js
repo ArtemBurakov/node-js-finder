@@ -8,6 +8,9 @@ module.exports = app => {
     // Authorize User
     app.post("/users/authorize", validationMiddleware.authorize, users.authorize);
 
+    // User coordinates
+    app.post("/users/coordinates", validationMiddleware.coordinates, users.coordinates);
+
     // // Retrieve all Users
     // app.get("/users", users.findAll);
 

@@ -8,6 +8,8 @@ const User = function(user) {
   this.status = user.status;
   this.created_at = user.created_at;
   this.updated_at = user.updated_at;
+  this.last_latitude = user.last_latitude;
+  this.last_longitude = user.last_longitude;
   this.access_token = user.access_token;
 };
 
@@ -98,6 +100,27 @@ User.findByUsername = (username, result) => {
     // not found User with the username
     result({ kind: "not_found" }, null);
   });
+};
+
+User.coordinates = (user, result) => {
+  sql.query("UPDATE users SET last_latitude = ?, last_longitude = ? WHERE email = ?",
+    [user.last_latitude, user.last_longitude, user.email],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      if (res.affectedRows == 0) {
+        // not found User with the email
+        result({ kind: "not_found" }, null);
+        return;
+      }
+
+      result(null, null);
+    }
+  );
 };
 
 // User.getAll = result => {

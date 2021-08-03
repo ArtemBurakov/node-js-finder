@@ -88,6 +88,31 @@ exports.authorize = (req, res) => {
   });
 };
 
+// Save last User coordinates
+exports.coordinates = async (req, res) => {
+  // Create a User model
+  const user = new User({
+    email: req.body.email,
+    last_latitude: req.body.latitude,
+    last_longitude: req.body.longitude
+  });
+
+  // Save last User coordinates
+  User.coordinates(user, (err, data) => {
+    if (err)
+      res.status(500).send({
+        success: false,
+        data: null,
+        message: 'Some error occurred while saving User`s last coordinates.'
+      });
+    else res.send({
+      success: true,
+      data: null,
+      message: 'User last coordinates saved successful.'
+    });
+  });
+};
+
 // Find a single User with a userId
 exports.findOne = (req, res) => {
   User.findById(req.params.userId, (err, data) => {

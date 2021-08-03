@@ -41,6 +41,26 @@ const authorize = async (req, res, next) => {
   });
 }
 
+const coordinates = async (req, res, next) => {
+  const validationRule = {
+    "latitude": "required",
+    "longitude": "required"
+  }
+
+  await Validator(req.body, validationRule, (err, status) => {
+    if (!status) {
+      res.status(412)
+        .send({
+          success: false,
+          message: 'Validation failed',
+          data: err
+        });
+    } else {
+      next();
+    }
+  });
+}
+
 const addFcmToken = async (req, res, next) => {
   const validationRule = {
     "registration_token": "required",
@@ -63,5 +83,6 @@ const addFcmToken = async (req, res, next) => {
 module.exports = {
   create,
   authorize,
+  coordinates,
   addFcmToken
 };
