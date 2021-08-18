@@ -131,7 +131,7 @@ User.coordinates = (user, result) => {
 //       return;
 //     }
 
-//     console.log("users: ", res);
+//     console.log("getting users: ", res);
 //     result(null, res);
 //   });
 // };

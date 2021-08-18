@@ -90,26 +90,51 @@ exports.authorize = (req, res) => {
 
 // Save last User coordinates
 exports.coordinates = async (req, res) => {
-  // Create a User model
-  const user = new User({
-    email: req.body.email,
-    last_latitude: req.body.latitude,
-    last_longitude: req.body.longitude
-  });
+  // Get User by accessToken
+  const accessToken = req.headers['authorization'].split(' ')[1];
 
-  // Save last User coordinates
-  User.coordinates(user, (err, data) => {
-    if (err)
-      res.status(500).send({
-        success: false,
-        data: null,
-        message: 'Some error occurred while saving User`s last coordinates.'
+  User.findByAccessToken(accessToken, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(401).send({
+          success: false,
+          data: null,
+          message: `Unauthorized.`
+        });
+      } else {
+        res.status(500).send({
+          success: false,
+          data: null,
+          message: 'Some error occurred while getting User by accessToken.'
+        });
+      }
+    } else {
+      const userId = data.id;
+
+      // Create a User model
+      const user = new User({
+        email: req.body.email,
+        last_latitude: req.body.latitude,
+        last_longitude: req.body.longitude
       });
-    else res.send({
-      success: true,
-      data: null,
-      message: 'User last coordinates saved successful.'
-    });
+
+      // Save last User coordinates
+      User.coordinates(user, (err, data) => {
+        if (err)
+          res.status(500).send({
+            success: false,
+            data: null,
+            message: 'Some error occurred while saving User`s last coordinates.'
+          });
+        else {
+          res.send({
+            success: true,
+            data: null,
+            message: 'User last coordinates saved successful.'
+          });
+        }
+      });
+    }
   });
 };
 

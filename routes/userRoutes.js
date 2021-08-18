@@ -1,5 +1,6 @@
 module.exports = app => {
     const users = require("../controller/UserController");
+    const friends = require("../controller/UserFriendsController");
     const validationMiddleware = require('../middleware/validation-middleware');
 
     // Create a new User
@@ -10,6 +11,9 @@ module.exports = app => {
 
     // User coordinates
     app.post("/users/coordinates", validationMiddleware.coordinates, users.coordinates);
+
+    // Friends coordinates
+    app.get("/users/coordinates", friends.coordinates);
 
     // // Retrieve all Users
     // app.get("/users", users.findAll);
