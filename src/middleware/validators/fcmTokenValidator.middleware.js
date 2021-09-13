@@ -5,5 +5,8 @@ exports.createFcmTokenSchema = [
         .exists()
         .withMessage('Registration token is required')
         .isLength({ min: 3 })
-        .withMessage('Must be at least 3 chars long')
+        .withMessage('Must be at least 3 chars long'),
+    body('email')
+        .exists()
+        .withMessage('Email is required')
 ];
