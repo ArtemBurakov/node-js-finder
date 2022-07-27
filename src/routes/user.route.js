@@ -7,18 +7,19 @@ const awaitHandlerFactory = require('../middleware/awaitHandlerFactory.middlewar
 
 const { createUserSchema, updateUserSchema, validateLocation, validateLogin } = require('../middleware/validators/userValidator.middleware');
 
-router.get('/', auth(), awaitHandlerFactory(userController.getAllUsers)); // localhost:3000/api/v1/users
-router.get('/id/:id', auth(), awaitHandlerFactory(userController.getUserById)); // localhost:3000/api/v1/users/id/1
-router.get('/username/:username', auth(), awaitHandlerFactory(userController.getUserByUserName)); // localhost:3000/api/v1/users/usersname/julia
-router.get('/whoami', auth(), awaitHandlerFactory(userController.getCurrentUser)); // localhost:3000/api/v1/users/whoami
+router.get('/', auth(), awaitHandlerFactory(userController.getAllUsers));
+router.get('/id/:id', auth(), awaitHandlerFactory(userController.getUserById));
+router.get('/username/:username', auth(), awaitHandlerFactory(userController.getUserByUserName));
+router.get('/whoami', auth(), awaitHandlerFactory(userController.getCurrentUser));
+router.get('/locations/:email', auth(), awaitHandlerFactory(userController.getUsersLocations));
 
-router.post('/', createUserSchema, awaitHandlerFactory(userController.createUser)); // localhost:3000/api/v1/users
-router.post('/location', auth(), validateLocation, awaitHandlerFactory(userController.saveUserLocation)); // localhost:3000/api/v1/users/location
+router.post('/', createUserSchema, awaitHandlerFactory(userController.createUser));
+router.post('/location', auth(), validateLocation, awaitHandlerFactory(userController.saveUserLocation));
 
-router.patch('/id/:id', auth(Role.Admin), updateUserSchema, awaitHandlerFactory(userController.updateUser)); // localhost:3000/api/v1/users/id/1 , using patch for partial update
+router.patch('/id/:id', auth(Role.Admin), updateUserSchema, awaitHandlerFactory(userController.updateUser));
 
-router.delete('/id/:id', auth(Role.Admin), awaitHandlerFactory(userController.deleteUser)); // localhost:3000/api/v1/users/id/1
+router.delete('/id/:id', auth(Role.Admin), awaitHandlerFactory(userController.deleteUser));
 
-router.post('/login', validateLogin, awaitHandlerFactory(userController.userLogin)); // localhost:3000/api/v1/users/login
+router.post('/login', validateLogin, awaitHandlerFactory(userController.userLogin));
 
 module.exports = router;

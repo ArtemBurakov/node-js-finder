@@ -52,6 +52,22 @@ class UserController {
         res.send(userWithoutPassword);
     };
 
+    getUsersLocations = async (req, res, next) => {
+        let userList = await UserModel.find();
+        if (!userList.length) {
+            throw new HttpException(404, 'Users not found');
+        }
+
+        const result = [];
+        userList.map(user => {
+            if (user.email != req.params.email) {
+                const { password, ...userWithoutPassword } = user;
+                result.push(userWithoutPassword);
+            }
+        });
+        res.send(result);
+    };
+
     createUser = async (req, res, next) => {
         this.checkValidation(req);
 

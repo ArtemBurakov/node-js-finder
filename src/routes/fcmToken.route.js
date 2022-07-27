@@ -6,6 +6,6 @@ const awaitHandlerFactory = require('../middleware/awaitHandlerFactory.middlewar
 
 const { createFcmTokenSchema } = require('../middleware/validators/fcmTokenValidator.middleware');
 
-router.post('/', auth(), createFcmTokenSchema, awaitHandlerFactory(fcmTokenController.createFcmToken)); // localhost:3000/api/v1/fcm-tokens
+router.post('/', auth(), createFcmTokenSchema, awaitHandlerFactory(fcmTokenController.createFcmToken));
 
 module.exports = router;
