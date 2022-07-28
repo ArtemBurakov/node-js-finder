@@ -8,6 +8,7 @@ const getCurrentTimestamp = () => {
 
 class UserModel {
     tableName = 'user';
+    friendsTableName = 'user_friends'
 
     find = async (params = {}) => {
         let sql = `SELECT * FROM ${this.tableName}`;
@@ -20,6 +21,13 @@ class UserModel {
         sql += ` WHERE ${columnSet}`;
 
         return await query(sql, [...values]);
+    }
+
+    findFriends = async (params) => {
+        const { columnSet, values } = multipleColumnSet(params)
+        const sql = `SELECT * FROM ${this.friendsTableName} WHERE ${columnSet}`;
+        const friends = await query(sql, [...values]);
+        return friends;
     }
 
     findOne = async (params) => {
@@ -58,6 +66,24 @@ class UserModel {
         const sql = `DELETE FROM ${this.tableName}
         WHERE id = ?`;
         const result = await query(sql, [id]);
+        const affectedRows = result ? result.affectedRows : 0;
+
+        return affectedRows;
+    }
+
+    deleteFriend = async (user_id, friend_id) => {
+        const sql = `DELETE FROM ${this.friendsTableName}
+        WHERE user_id = ? and friend_id = ?`;
+        const result = await query(sql, [user_id, friend_id]);
+        const affectedRows = result ? result.affectedRows : 0;
+
+        return affectedRows;
+    }
+
+    addFriend = async ({ user_id, friend_id }) => {
+        const sql = `INSERT INTO ${this.friendsTableName} (user_id, friend_id) VALUES (?,?)`;
+
+        const result = await query(sql, [user_id, friend_id]);
         const affectedRows = result ? result.affectedRows : 0;
 
         return affectedRows;

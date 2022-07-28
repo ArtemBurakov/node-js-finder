@@ -53,19 +53,43 @@ class UserController {
     };
 
     getUsersLocations = async (req, res, next) => {
-        let userList = await UserModel.find();
-        if (!userList.length) {
+        const user = await UserModel.findOne({email: req.params.email});
+        if (!user) {
+            throw new HttpException(404, 'User not found');
+        }
+
+        let friends = await UserModel.findFriends({ user_id: user.id });
+        if (!friends.length) {
             throw new HttpException(404, 'Users not found');
         }
 
-        const result = [];
-        userList.map(user => {
-            if (user.email != req.params.email) {
-                const { password, ...userWithoutPassword } = user;
-                result.push(userWithoutPassword);
-            }
-        });
-        res.send(result);
+        const promises = friends.map(async friend => {
+            const founded_friend = await UserModel.findOne({id: friend.friend_id});
+            return founded_friend;
+        })
+
+        const friendsList = await Promise.all(promises);
+        res.send(friendsList);
+    };
+
+    getUserFriends = async (req, res, next) => {
+        const user = await UserModel.findOne({email: req.params.email});
+        if (!user) {
+            throw new HttpException(404, 'User not found');
+        }
+
+        let friends = await UserModel.findFriends({ user_id: user.id });
+        if (!friends.length) {
+            throw new HttpException(404, 'Users not found');
+        }
+
+        const promises = friends.map(async friend => {
+            const founded_friend = await UserModel.findOne({id: friend.friend_id});
+            return founded_friend;
+        })
+
+        const friendsList = await Promise.all(promises);
+        res.send(friendsList);
     };
 
     createUser = async (req, res, next) => {
@@ -113,6 +137,17 @@ class UserController {
         res.send('User has been deleted');
     };
 
+    deleteFriend = async (req, res, next) => {
+        const user = await UserModel.findOne({ email: req.params.user_email });
+        const friend = await UserModel.findOne({ email: req.params.friend_email });
+
+        const result = await UserModel.deleteFriend(user.id, friend.id);
+        if (!result) {
+            throw new HttpException(404, 'User not found');
+        }
+        res.send('Friend has been deleted');
+    };
+
     userLogin = async (req, res, next) => {
         this.checkValidation(req);
 
@@ -139,6 +174,38 @@ class UserController {
         const { password, ...userWithoutPassword } = user;
 
         res.send({ ...userWithoutPassword, token });
+    };
+
+    addFriend = async (req, res, next) => {
+        this.checkValidation(req);
+
+        const { email, friend_email: friend_email } = req.body;
+        const user = await UserModel.findOne({ email });
+        const friend = await UserModel.findOne({ email: friend_email });
+
+        if (user.id == friend.id) {
+            throw new HttpException(400, 'Something went wrong');
+        }
+        if (!user || !friend) {
+            throw new HttpException(404, 'Something went wrong');
+        }
+
+        let friends = await UserModel.findFriends({ user_id: user.id });
+        if (!friends) {
+            throw new HttpException(404, 'Something went wrong');
+        }
+        await Promise.all(friends.map(retrivedFriend => {
+            if (friend.id == retrivedFriend.friend_id) {
+                throw new HttpException(400, 'Something went wrong');
+            }
+        }))
+
+        const result = await UserModel.addFriend({user_id: user.id, friend_id: friend.id});
+        if (!result) {
+            throw new HttpException(404, 'Something went wrong');
+        }
+
+        res.status(201).send('User has been added to your friends list!');
     };
 
     saveUserLocation = async (req, res, next) => {
