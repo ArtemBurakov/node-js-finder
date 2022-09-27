@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS node-js-finder;
-CREATE DATABASE IF NOT EXISTS node-js-finder;
-USE node-js-finder;
+DROP DATABASE IF EXISTS node_js_finder;
+CREATE DATABASE IF NOT EXISTS node_js_finder;
+USE node_js_finder;
 
 DROP TABLE IF EXISTS user;
 

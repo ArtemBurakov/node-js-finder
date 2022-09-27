@@ -74,7 +74,7 @@ Now a new database for this project has been created. You can check it by using 
 
 To run this project, you will need to add the following environment variables to your `.env` file.
 
-* Create a new `.env` file in `node-js-finder/src` folder
+* Create a new `.env` file in `node-js-finder` folder
 
 ```bash
   touch .env
@@ -95,7 +95,7 @@ To run this project, you will need to add the following environment variables to
 DB_HOST=localhost
 DB_USER=YOUR_DB_USER_NAME
 DB_PASS=YOUR_DB_USER_PASSWORD
-DB_DATABASE=node-js-finder
+DB_DATABASE=node_js_finder
 PORT=3000
 SECRET_JWT=fkjfg567B%34&Hy_~!bmMXG$3yf8ho
 ```
